@@ -1,0 +1,49 @@
+.TH xmpp-bridge 1 "2016-08-25" "xmpp-bridge" "User Commands"
+.PP
+.SH NAME
+xmpp-bridge \- connect command-line programs to XMPP
+.PP
+.SH SYNOPSIS
+\fBxmpp-bridge\fR [\fIOWN_JID\fR] [\fIPASSWORD\fR] [\fIPEER_JID\fR]
+.PP
+.SH DESCRIPTION
+.PP
+Connect to an XMPP account and communicate with the specified peer. Text is
+read from standard input and sent to the peer, and any messages received from
+the peer will be printed on standard output. \fBxmpp-bridge\fR is intended to
+be used as a building-block for other programs (or shell scripts) that want to
+communicate status information over XMPP, or wish to ask for input over XMPP.
+.PP
+.SH ARGUMENTS
+.PP
+.IP "\fIOWN_JID\fR" 4
+The XMPP address of the account that \fBxmpp-bridge\fR will sign into. A
+resource may optionally be included to identify this instance of
+\fBxmpp-bridge\fR.
+.PP
+.IP "\fIPASSWORD\fR" 4
+The password that belongs to the \fIOWN_JID\fR.
+.PP
+.IP "\fIPEER_JID\fR" 4
+The XMPP address of the account that \fBxmpp-bridge\fR will communicate with. A
+resource may optionally be included, to restrict communication to peers with a
+matching resource.
+.PP
+.SH EXAMPLE
+.PP
+Report the current date and time to user "peer@example.org" every 5 minutes:
+.PP
+.ft CW
+.nf
+.ne 3
+\&    #!/bin/sh
+\&    while true; do
+\&        sleep 300
+\&        date
+\&    done | xmpp-bridge datebot@example.org password peer@example.org
+.ft
+.fi
+.PP
+.SH SEE ALSO
+.PP
+Project homepage: <https://github.com/majewsky/xmpp-bridge>
