@@ -19,22 +19,54 @@
 
 #include "xmpp-bridge.h"
 
+#include <stdlib.h>
 #include <string.h>
 
+#define IS_STRING_EMPTY(x) ((x) == NULL || *(x) == '\0')
+
 bool config_init(struct Config* cfg, int argc, char** argv) {
-    //get arguments (TODO: validate JIDs)
-    if (argc != 4) {
-        fprintf(stderr, "Usage: %s <own-jid> <pass> <peer-jid>\n", argv[0]);
-        return false;
+    for (int idx = 1; idx < argc; ++idx) {
+        char* arg = argv[idx];
+        switch (idx) {
+            case 1:
+                cfg->peer_jid = arg;
+                break;
+            case 2:
+                cfg->jid = arg;
+                break;
+            case 3:
+                cfg->password = arg;
+                break;
+            default:
+                //too many positional arguments
+                fprintf(stderr, "Usage: %s <peer-jid> <own-jid> <pass>\n", argv[0]);
+                return false;
+        }
     }
 
+    //retrieve omitted positional arguments from their corresponding environment variables
+    if (IS_STRING_EMPTY(cfg->jid)) {
+        cfg->jid = getenv("XMPPBRIDGE_JID");
+    }
+    if (IS_STRING_EMPTY(cfg->password)) {
+        cfg->password = getenv("XMPPBRIDGE_PASSWORD");
+    }
+    if (IS_STRING_EMPTY(cfg->peer_jid)) {
+        cfg->peer_jid = getenv("XMPPBRIDGE_PEER_JID");
+    }
+
+    //validate arguments
     bool valid = true;
     if (!validate_jid(cfg->jid)) {
         fprintf(stderr, "FATAL: '%s' is not a valid JID\n", cfg->jid);
         valid = false;
     }
     if (!validate_jid(cfg->peer_jid)) {
-        fprintf(stderr, "FATAL: '%s' is not a valid JID\n", cfg->peer_jid);
+        fprintf(stderr, "FATAL: '%s' is not a valid peer JID\n", cfg->peer_jid);
+        valid = false;
+    }
+    if (IS_STRING_EMPTY(cfg->password)) {
+        fprintf(stderr, "FATAL: no password given and $XMPPBRIDGE_PASSWORD is not set\n");
         valid = false;
     }
 

@@ -4,7 +4,7 @@
 xmpp-bridge \- connect command-line programs to XMPP
 .PP
 .SH SYNOPSIS
-\fBxmpp-bridge\fR [\fIOWN_JID\fR] [\fIPASSWORD\fR] [\fIPEER_JID\fR]
+\fBxmpp-bridge\fR [\fIPEER_JID\fR] [\fIOWN_JID\fR] [\fIPASSWORD\fR]
 .PP
 .SH DESCRIPTION
 .PP
@@ -16,6 +16,11 @@ communicate status information over XMPP, or wish to ask for input over XMPP.
 .PP
 .SH ARGUMENTS
 .PP
+.IP "\fIPEER_JID\fR" 4
+The XMPP address of the account that \fBxmpp-bridge\fR will communicate with. A
+resource may optionally be included, to restrict communication to peers with a
+matching resource.
+.PP
 .IP "\fIOWN_JID\fR" 4
 The XMPP address of the account that \fBxmpp-bridge\fR will sign into. A
 resource may optionally be included to identify this instance of
@@ -24,11 +29,12 @@ resource may optionally be included to identify this instance of
 .IP "\fIPASSWORD\fR" 4
 The password that belongs to the \fIOWN_JID\fR.
 .PP
-.IP "\fIPEER_JID\fR" 4
-The XMPP address of the account that \fBxmpp-bridge\fR will communicate with. A
-resource may optionally be included, to restrict communication to peers with a
-matching resource.
-.PP
+Any number of trailing positional arguments may be omitted, in which case the
+corresponding values will be read from the environment variables
+\fIXMPPBRIDGE_PEER_JID\fR, \fIXMPPBRIDGE_JID\fR and \fIXMPPBRIDGE_PASSWORD\fR,
+respectively. This is useful to hide sensitive credentials in process listings,
+e.g. as produced by ps(1). The order of positional arguments is chosen such
+that the most sensitive credentials come last.
 .SH EXAMPLE
 .PP
 Report the current date and time to user "peer@example.org" every 5 minutes:
@@ -40,7 +46,23 @@ Report the current date and time to user "peer@example.org" every 5 minutes:
 \&    while true; do
 \&        sleep 300
 \&        date
-\&    done | xmpp-bridge datebot@example.org password peer@example.org
+\&    done | xmpp-bridge peer@example.org datebot@example.org password
+.ft
+.fi
+.PP
+To keep credentials from showing up in process listings, pass them in
+environment variables instead of via the command line:
+.PP
+.ft CW
+.nf
+.ne 3
+\&    #!/bin/sh
+\&    export XMPPBRIDGE_JID=datebot@example.org
+\&    export XMPPBRIDGE_PASSWORD=password
+\&    while true; do
+\&        sleep 300
+\&        date
+\&    done | xmpp-bridge peer@example.org
 .ft
 .fi
 .PP
