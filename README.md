@@ -24,7 +24,8 @@ As a developer, say `make MODE=debug` instead.
 Call like
 
 ```bash
-xmpp-bridge $OWN_JID $PASSWORD $OTHER_JID
+xmpp-bridge [options] $OTHER_JID $OWN_JID $PASSWORD
 ```
 
-For details, have a look at the [manpage](./xmpp-bridge.1).
+Credentials can also be given as environment variables instead of on the
+command line. For details, have a look at the [manpage](./xmpp-bridge.1).
