@@ -6,7 +6,7 @@ CFLAGS_release := -O3 -DRELEASE
 
 CFLAGS   = -std=gnu99 -Wall -Werror -Wextra -pedantic $(CFLAGS_$(MODE))
 CFLAGS  += $(shell pkg-config --cflags libstrophe)
-LDFLAGS += $(shell pkg-config --libs   libstrophe)
+LDFLAGS := $(shell pkg-config --libs   libstrophe) $(LDFLAGS)
 
 build/%.o: src/%.c src/*.h
 	$(CC) $(CFLAGS) -c -o $@ $<
