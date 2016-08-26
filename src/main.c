@@ -19,15 +19,8 @@
 
 #include "xmpp-bridge.h"
 
-#include <fcntl.h>
-#include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/select.h>
-#include <sys/time.h>
-#include <unistd.h>
-
 #include <strophe.h>
 
 #ifdef RELEASE
@@ -35,14 +28,6 @@
 #else
 #   define MY_LOG_LEVEL XMPP_LEVEL_DEBUG
 #endif
-
-struct Config {
-    const char* jid;
-    const char* password;
-    const char* peer_jid;
-    xmpp_ctx_t* ctx;
-    bool        connected;
-};
 
 void send_presence(xmpp_conn_t* conn, const struct Config* cfg) {
     //send <presence/> to appear online to contacts
@@ -107,28 +92,8 @@ void conn_handler(xmpp_conn_t* const conn, const xmpp_conn_event_t event, const 
 #define STDIN 0
 
 int main(int argc, char** argv) {
-    //get arguments (TODO: validate JIDs)
-    if (argc != 4) {
-        fprintf(stderr, "Usage: %s <own-jid> <pass> <peer-jid>\n", argv[0]);
-        exit(1);
-    }
-    struct Config cfg = {
-        .jid       = strdup(argv[1]),
-        .password  = strdup(argv[2]),
-        .peer_jid  = strdup(argv[3]),
-        .ctx       = NULL,
-        .connected = false,
-    };
-    bool valid = true;
-    if (!validate_jid(cfg.jid)) {
-        fprintf(stderr, "FATAL: '%s' is not a valid JID\n", cfg.jid);
-        valid = false;
-    }
-    if (!validate_jid(cfg.peer_jid)) {
-        fprintf(stderr, "FATAL: '%s' is not a valid JID\n", cfg.peer_jid);
-        valid = false;
-    }
-    if (!valid) {
+    struct Config cfg;
+    if (!config_init(&cfg, argc, argv)) {
         return 1;
     }
 

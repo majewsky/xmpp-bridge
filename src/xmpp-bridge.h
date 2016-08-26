@@ -23,6 +23,20 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include <strophe.h>
+
+/***** config.c *****/
+
+struct Config {
+    const char* jid;
+    const char* password;
+    const char* peer_jid;
+    xmpp_ctx_t* ctx;
+    bool        connected;
+};
+
+bool config_init(struct Config* cfg, int argc, char** argv);
+
 /***** io.c *****/
 
 struct ReadBuffer {
