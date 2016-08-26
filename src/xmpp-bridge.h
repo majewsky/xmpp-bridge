@@ -31,6 +31,7 @@ struct Config {
     const char* jid;
     const char* password;
     const char* peer_jid;
+    bool        show_delayed_messages;
     xmpp_ctx_t* ctx;
     bool        connected;
 };

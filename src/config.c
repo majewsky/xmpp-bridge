@@ -25,9 +25,22 @@
 #define IS_STRING_EMPTY(x) ((x) == NULL || *(x) == '\0')
 
 bool config_init(struct Config* cfg, int argc, char** argv) {
+    //initialize fields of `cfg`
+    cfg->jid = cfg->password = cfg->peer_jid = false;
+    cfg->show_delayed_messages = false;
+    cfg->ctx = NULL;
+    cfg->connected = false;
+
+    unsigned int pos = 0;
     for (int idx = 1; idx < argc; ++idx) {
         char* arg = argv[idx];
-        switch (idx) {
+        //check if `arg` is an option
+        if (strcmp(arg, "--show-delayed") == 0) {
+            cfg->show_delayed_messages = true;
+            continue;
+        }
+        //`arg` is a positional argument
+        switch (++pos) {
             case 1:
                 cfg->peer_jid = arg;
                 break;
@@ -69,10 +82,6 @@ bool config_init(struct Config* cfg, int argc, char** argv) {
         fprintf(stderr, "FATAL: no password given and $XMPPBRIDGE_PASSWORD is not set\n");
         valid = false;
     }
-
-    //initialize remaining fields of `cfg`
-    cfg->ctx = NULL;
-    cfg->connected = false;
 
     return valid;
 }

@@ -42,6 +42,25 @@ int message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, void* 
     //userdata contains a Config struct
     struct Config* cfg = (struct Config*) userdata;
 
+    if (!cfg->show_delayed_messages) {
+        //check for delayed messages formatted according to XEP-0091
+        xmpp_stanza_t* delay_marker = xmpp_stanza_get_child_by_name(stanza, "x");
+        if (delay_marker != NULL) {
+            char* ns = xmpp_stanza_get_ns(delay_marker);
+            if (ns != NULL && strcmp(ns, "jabber:x:delay") == 0) {
+                return 1;
+            }
+        }
+        //check for delayed messages formatted according to XEP-0203
+        delay_marker = xmpp_stanza_get_child_by_name(stanza, "delay");
+        if (delay_marker != NULL) {
+            char* ns = xmpp_stanza_get_ns(delay_marker);
+            if (ns != NULL && strcmp(ns, "urn:xmpp:delay") == 0) {
+                return 1;
+            }
+        }
+    }
+
     //check JID of sender
     char* other_jid = xmpp_stanza_get_attribute(stanza, "from");
     if (!match_jid(other_jid, cfg->peer_jid)) {
