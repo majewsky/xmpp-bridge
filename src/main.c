@@ -77,13 +77,16 @@ int message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, void* 
         return 1;
     }
 
-    //print message text
-    //TODO: check write errors
-    fputs(message, stdout);
-    if (message[strlen(message) - 1] != '\n') {
-        fputc('\n', stdout);
+    //put message text into write queue (ensure trailing newline)
+    const size_t len  = strlen(message);
+    if (message[len - 1] == '\n') {
+        io_write(cfg->io, message, len);
     }
-    fflush(stdout);
+    else {
+        message[len] = '\n';
+        io_write(cfg->io, message, len + 1);
+        message[len] = '\0';
+    }
     xmpp_free(cfg->ctx, message);
 
     return 1;
@@ -108,7 +111,8 @@ void conn_handler(xmpp_conn_t* const conn, const xmpp_conn_event_t event, const 
     }
 }
 
-#define STDIN 0
+#define STDIN  0
+#define STDOUT 1
 
 int main(int argc, char** argv) {
     struct Config cfg;
@@ -138,7 +142,8 @@ int main(int argc, char** argv) {
 
     //enter the second event loop which sends and receives messages
     struct IO io;
-    io_init(&io, STDIN);
+    io_init(&io, STDIN, STDOUT);
+    cfg.io = &io;
     bool stay_in_loop = true;
 
     while (stay_in_loop && cfg.connected) {

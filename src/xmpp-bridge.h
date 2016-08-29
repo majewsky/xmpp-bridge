@@ -34,6 +34,7 @@ struct Config {
     bool        show_delayed_messages;
     xmpp_ctx_t* ctx;
     bool        connected;
+    struct IO*  io;
 };
 
 bool config_init(struct Config* cfg, int argc, char** argv);
@@ -46,18 +47,23 @@ struct Buffer {
 };
 
 struct IO {
-    int in_fd;
+    int in_fd, out_fd;
     struct Buffer in_buf;
     bool eof;
 };
 
 ///Setup an empty @a buffer to read from the given @a fd.
-void io_init(struct IO* io, int in_fd);
+void io_init(struct IO* io, int in_fd, int out_fd);
 
 ///Perform a single read() on the given @a fd, but timeout after @usec microseconds.
 ///On error, return false. The error is reported to stderr.
 ///Otherwise, return true. On EOF, also set @a buffer->eof.
 bool io_read(struct IO* io, int usec);
+
+///Copy the given data into the write buffer of the given @a io. The data will
+///be written on the IO's out_fd when the out_fd is available for writing the
+///next time.
+void io_write(struct IO* io, const char* data, size_t count);
 
 ///If @a buffer contains a whole line (including the "\n"), remove the line
 ///from the buffer and return it (with the "\n" trimmed). Returns NULL if no

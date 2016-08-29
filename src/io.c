@@ -29,8 +29,9 @@
 
 #define READ_SIZE 4096
 
-void io_init(struct IO* io, int in_fd) {
+void io_init(struct IO* io, int in_fd, int out_fd) {
     io->in_fd           = in_fd;
+    io->out_fd          = out_fd;
     io->in_buf.buffer   = NULL; //allocated on first use
     io->in_buf.size     = 0;
     io->in_buf.capacity = 0;
@@ -133,4 +134,9 @@ char* io_getline(struct IO* io) {
         return NULL;
     }
     return result;
+}
+
+void io_write(struct IO* io, const char* data, size_t count) {
+    //TODO: stub
+    write(io->out_fd, data, count);
 }
