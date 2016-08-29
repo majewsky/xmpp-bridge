@@ -137,12 +137,12 @@ int main(int argc, char** argv) {
     }
 
     //enter the second event loop which sends and receives messages
-    struct ReadBuffer buf;
-    readbuffer_init(&buf, STDIN);
+    struct IO io;
+    io_init(&io, STDIN);
     bool stay_in_loop = true;
 
     while (stay_in_loop && cfg.connected) {
-        const bool success = readbuffer_read(&buf, 100000); //timeout = 100 ms
+        const bool success = io_read(&io, 100000); //timeout = 100 ms
         if (!success) {
             //error -> shutdown
             xmpp_disconnect(conn);
@@ -150,9 +150,9 @@ int main(int argc, char** argv) {
         } else {
             //check if a full line was received
             while (true) {
-                char* str = readbuffer_getline(&buf);
+                char* str = io_getline(&io);
                 if (str == NULL) {
-                    if (buf.eof) {
+                    if (io.eof) {
                         //EOF has been reached - commence normal shutdown
                         xmpp_disconnect(conn);
                         stay_in_loop = false;

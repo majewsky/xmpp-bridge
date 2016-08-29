@@ -40,25 +40,29 @@ bool config_init(struct Config* cfg, int argc, char** argv);
 
 /***** io.c *****/
 
-struct ReadBuffer {
-    int fd;
+struct Buffer {
     char* buffer;
     size_t size, capacity;
+};
+
+struct IO {
+    int in_fd;
+    struct Buffer in_buf;
     bool eof;
 };
 
 ///Setup an empty @a buffer to read from the given @a fd.
-void readbuffer_init(struct ReadBuffer* buffer, int fd);
+void io_init(struct IO* io, int in_fd);
 
 ///Perform a single read() on the given @a fd, but timeout after @usec microseconds.
 ///On error, return false. The error is reported to stderr.
 ///Otherwise, return true. On EOF, also set @a buffer->eof.
-bool readbuffer_read(struct ReadBuffer* buffer, int usec);
+bool io_read(struct IO* io, int usec);
 
 ///If @a buffer contains a whole line (including the "\n"), remove the line
 ///from the buffer and return it (with the "\n" trimmed). Returns NULL if no
 ///full line is available. The caller must free() the returned pointer.
-char* readbuffer_getline(struct ReadBuffer* buffer);
+char* io_getline(struct IO* io);
 
 /***** jid.c *****/
 
