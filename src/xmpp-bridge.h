@@ -48,17 +48,20 @@ struct Buffer {
 
 struct IO {
     int in_fd, out_fd;
-    struct Buffer in_buf;
+    struct Buffer in_buf, out_buf;
     bool eof;
 };
 
 ///Setup an empty @a buffer to read from the given @a fd.
-void io_init(struct IO* io, int in_fd, int out_fd);
+///@return false on error
+bool io_init(struct IO* io, int in_fd, int out_fd);
 
-///Perform a single read() on the given @a fd, but timeout after @usec microseconds.
+///Wait for at most @a usec milliseconds, and perform a single read() on the @a
+///in_fd and a write() on the @a out_fd if they become available within the
+///wait period.
 ///On error, return false. The error is reported to stderr.
-///Otherwise, return true. On EOF, also set @a buffer->eof.
-bool io_read(struct IO* io, int usec);
+///Otherwise, return true. On EOF of @a in_fd, also set @a eof.
+bool io_select(struct IO* io, int usec);
 
 ///Copy the given data into the write buffer of the given @a io. The data will
 ///be written on the IO's out_fd when the out_fd is available for writing the

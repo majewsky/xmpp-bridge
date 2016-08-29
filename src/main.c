@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
     bool stay_in_loop = true;
 
     while (stay_in_loop && cfg.connected) {
-        const bool success = io_read(&io, 100000); //timeout = 100 ms
+        const bool success = io_select(&io, 100000); //timeout = 100 ms
         if (!success) {
             //error -> shutdown
             xmpp_disconnect(conn);
