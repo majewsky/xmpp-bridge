@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# Synopsis: with-xmpp-bridge COMMAND [ARG]...
+#
+# Parameters to xmpp-bridge must be passed in the environment, see
+# man:xmpp-bridge(1) for details.
+
+set -euo pipefail
+pipexec -- [ A "$@" ] [ B /usr/bin/xmpp-bridge ] "{A:1>B:0}" "{B:1>A:0}"
