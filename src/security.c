@@ -17,10 +17,46 @@
 *
 *******************************************************************************/
 
+#define _GNU_SOURCE //setres[ug]id
+
 #include "xmpp-bridge.h"
 
+#include <grp.h>
+#include <pwd.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 static bool sec_drop_privileges() {
-    //TODO stub
+    //find UID for "nobody"
+    struct passwd* pw = getpwnam("nobody");
+    if (pw == NULL) {
+        perror("Cannot find ID for user \"nobody\"");
+        return false;
+    }
+    const uid_t uid = pw->pw_uid;
+
+    //find UID for "nobody"
+    struct group* gr = getgrnam("nobody");
+    if (gr == NULL) {
+        perror("Cannot find ID for group \"nobody\"");
+        return false;
+    }
+    const gid_t gid = gr->gr_gid;
+
+    //drop privileges
+    const int result1 = setresgid(gid, gid, gid);
+    if (result1 < 0) {
+        perror("Cannot change user to \"nobody\"");
+        return false;
+    }
+    const int result2 = setresuid(uid, uid, uid);
+    if (result2 < 0) {
+        perror("Cannot change group to \"nobody\"");
+        return false;
+    }
+
+    //TODO: seteuid, setreuid, setresuid
+    //TODO: setegid, setregid, setresgid
     return true;
 }
 
