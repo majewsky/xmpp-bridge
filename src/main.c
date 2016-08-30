@@ -119,6 +119,9 @@ int main(int argc, char** argv) {
     if (!config_init(&cfg, argc, argv)) {
         return 1;
     }
+    if (!sec_init(&cfg)) {
+        return 1;
+    }
 
     //initialize libstrophe context
     xmpp_initialize();

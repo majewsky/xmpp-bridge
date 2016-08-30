@@ -1,4 +1,4 @@
-.TH xmpp-bridge 1 "2016-08-25" "xmpp-bridge" "User Commands"
+.TH xmpp-bridge 1 "2016-08-30" "xmpp-bridge" "User Commands"
 .PP
 .SH NAME
 xmpp-bridge \- connect command-line programs to XMPP
@@ -37,6 +37,12 @@ e.g. as produced by ps(1). The order of positional arguments is chosen such
 that the most sensitive credentials come last.
 .PP
 .SH OPTIONS
+.PP
+.IP \fB--drop-privileges\fR 4
+Change user and group to "nobody". Enabled by default when started as root.
+.PP
+.IP \fB--no-drop-privileges\fR 4
+Reverse the effect of \fB--drop-privileges\fR when running as root.
 .PP
 .IP \fB--show-delayed\fR 4
 When the XMPP connection is established, the server may deliver stored messages

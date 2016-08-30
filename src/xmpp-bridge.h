@@ -32,12 +32,18 @@ struct Config {
     const char* password;
     const char* peer_jid;
     bool        show_delayed_messages;
+    bool        drop_privileges;
     xmpp_ctx_t* ctx;
     bool        connected;
     struct IO*  io;
 };
 
 bool config_init(struct Config* cfg, int argc, char** argv);
+
+/***** security.c *****/
+
+///Setup the security context for the application. Returns false on error.
+bool sec_init(const struct Config* cfg);
 
 /***** io.c *****/
 

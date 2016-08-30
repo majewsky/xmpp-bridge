@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define IS_STRING_EMPTY(x) ((x) == NULL || *(x) == '\0')
 
@@ -28,6 +29,7 @@ bool config_init(struct Config* cfg, int argc, char** argv) {
     //initialize fields of `cfg`
     cfg->jid = cfg->password = cfg->peer_jid = false;
     cfg->show_delayed_messages = false;
+    cfg->drop_privileges = geteuid() == 0; //by default, only when started as root
     cfg->ctx = NULL;
     cfg->connected = false;
 
@@ -37,6 +39,14 @@ bool config_init(struct Config* cfg, int argc, char** argv) {
         //check if `arg` is an option
         if (strcmp(arg, "--show-delayed") == 0) {
             cfg->show_delayed_messages = true;
+            continue;
+        }
+        if (strcmp(arg, "--drop-privileges") == 0) {
+            cfg->drop_privileges = true;
+            continue;
+        }
+        if (strcmp(arg, "--no-drop-privileges") == 0) {
+            cfg->drop_privileges = false;
             continue;
         }
         //`arg` is a positional argument
