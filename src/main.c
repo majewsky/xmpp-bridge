@@ -115,10 +115,18 @@ void conn_handler(xmpp_conn_t* const conn, const xmpp_conn_event_t event, const 
 #define STDOUT 1
 
 int main(int argc, char** argv) {
+    //read arguments
     struct Config cfg;
     if (!config_init(&cfg, argc, argv)) {
         return 1;
     }
+
+    //initialize file handles
+    struct IO io;
+    io_init(&io, STDIN, STDOUT);
+    cfg.io = &io;
+
+    //drop privileges
     if (!sec_init(&cfg)) {
         return 1;
     }
@@ -144,9 +152,6 @@ int main(int argc, char** argv) {
     }
 
     //enter the second event loop which sends and receives messages
-    struct IO io;
-    io_init(&io, STDIN, STDOUT);
-    cfg.io = &io;
     bool stay_in_loop = true;
 
     while (stay_in_loop && cfg.connected) {
