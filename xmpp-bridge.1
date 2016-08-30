@@ -39,10 +39,11 @@ that the most sensitive credentials come last.
 .SH OPTIONS
 .PP
 .IP \fB--drop-privileges\fR 4
-Change user and group to "nobody". Enabled by default when started as root.
+Change user and group to "nobody". This is the default when started as root.
 .PP
 .IP \fB--no-drop-privileges\fR 4
-Reverse the effect of \fB--drop-privileges\fR when running as root.
+Do not change the user and group of this process. This is the default when not
+started as root.
 .PP
 .IP \fB--show-delayed\fR 4
 When the XMPP connection is established, the server may deliver stored messages
