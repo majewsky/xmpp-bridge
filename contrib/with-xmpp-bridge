@@ -2,6 +2,9 @@
 #
 # Synopsis: with-xmpp-bridge COMMAND [ARG]...
 #
+# Runs a command with its stdin and stdout connected to xmpp-bridge,
+# as a sort of bidirectional pipe.
+#
 # Parameters to xmpp-bridge must be passed in the environment, see
 # man:xmpp-bridge(1) for details.
 
