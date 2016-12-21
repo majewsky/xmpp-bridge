@@ -23,6 +23,7 @@
 
 #include <grp.h>
 #include <pwd.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
 
