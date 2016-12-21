@@ -75,9 +75,13 @@ bool io_select(struct IO* io, int usec);
 void io_write(struct IO* io, const char* data, size_t count);
 
 ///If @a buffer contains a whole line (including the "\n"), remove the line
-///from the buffer and return it (with the "\n" trimmed). Returns NULL if no
-///full line is available. The caller must free() the returned pointer.
-char* io_getline(struct IO* io);
+///from the buffer and return it (with the "\n" trimmed). If multiple whole
+///lines are available, remove them all from the buffer and return them
+///(separated by "\n", but with the trailing "\n" removed).
+///
+///Returns NULL if no full line is available. The caller must free() the
+///returned pointer.
+char* io_getlines(struct IO* io);
 
 /***** jid.c *****/
 

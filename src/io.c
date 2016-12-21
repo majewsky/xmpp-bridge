@@ -180,13 +180,13 @@ bool io_select(struct IO* io, int usec) {
     return true;
 }
 
-char* io_getline(struct IO* io) {
+char* io_getlines(struct IO* io) {
     if (io->in_buf.buffer == NULL) {
         return NULL;
     }
 
     //find line terminator
-    char* nl_pos = strchr(io->in_buf.buffer, '\n');
+    char* nl_pos = strrchr(io->in_buf.buffer, '\n');
     if (nl_pos == NULL) {
         //no full line - wait for the rest
         if (!io->eof) {

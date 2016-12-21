@@ -161,38 +161,34 @@ int main(int argc, char** argv) {
             xmpp_disconnect(conn);
             stay_in_loop = false;
         } else {
-            //check if a full line was received
-            while (true) {
-                char* str = io_getline(&io);
-                if (str == NULL) {
-                    if (io.eof) {
-                        //EOF has been reached - commence normal shutdown
-                        xmpp_disconnect(conn);
-                        stay_in_loop = false;
-                    }
-                    //no more lines available at least until the next read()
-                    break;
-                } else {
-                    //send message
-                    xmpp_stanza_t* reply = xmpp_stanza_new(cfg.ctx);
-                    xmpp_stanza_set_name(reply, "message");
-                    xmpp_stanza_set_type(reply, "chat");
-                    xmpp_stanza_set_attribute(reply, "from", cfg.jid);
-                    xmpp_stanza_set_attribute(reply, "to", cfg.peer_jid);
-
-                    xmpp_stanza_t* body = xmpp_stanza_new(cfg.ctx);
-                    xmpp_stanza_set_name(body, "body");
-
-                    xmpp_stanza_t* text = xmpp_stanza_new(cfg.ctx);
-                    xmpp_stanza_set_text(text, str);
-
-                    xmpp_stanza_add_child(body, text);
-                    xmpp_stanza_add_child(reply, body);
-
-                    xmpp_send(conn, reply);
-                    xmpp_stanza_release(reply);
-                    free(str);
+            //check if one or multiple full lines were received
+            char* str = io_getlines(&io);
+            if (str == NULL) {
+                if (io.eof) {
+                    //EOF has been reached - commence normal shutdown
+                    xmpp_disconnect(conn);
+                    stay_in_loop = false;
                 }
+            } else {
+                //send message
+                xmpp_stanza_t* reply = xmpp_stanza_new(cfg.ctx);
+                xmpp_stanza_set_name(reply, "message");
+                xmpp_stanza_set_type(reply, "chat");
+                xmpp_stanza_set_attribute(reply, "from", cfg.jid);
+                xmpp_stanza_set_attribute(reply, "to", cfg.peer_jid);
+
+                xmpp_stanza_t* body = xmpp_stanza_new(cfg.ctx);
+                xmpp_stanza_set_name(body, "body");
+
+                xmpp_stanza_t* text = xmpp_stanza_new(cfg.ctx);
+                xmpp_stanza_set_text(text, str);
+
+                xmpp_stanza_add_child(body, text);
+                xmpp_stanza_add_child(reply, body);
+
+                xmpp_send(conn, reply);
+                xmpp_stanza_release(reply);
+                free(str);
             }
         }
 
