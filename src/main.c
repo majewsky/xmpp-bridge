@@ -117,7 +117,10 @@ void conn_handler(xmpp_conn_t* const conn, const xmpp_conn_event_t event, const 
 int main(int argc, char** argv) {
     //read arguments
     struct Config cfg;
-    if (!config_init(&cfg, argc, argv)) {
+    if (!config_init(&cfg)) {
+        return 1;
+    }
+    if (!config_consume_options(&cfg, &argc, &argv)) {
         return 1;
     }
 

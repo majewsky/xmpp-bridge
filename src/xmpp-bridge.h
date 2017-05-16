@@ -38,7 +38,11 @@ struct Config {
     struct IO*  io;
 };
 
-bool config_init(struct Config* cfg, int argc, char** argv);
+///Read config from environment
+bool config_init(struct Config* cfg);
+///Check argc/argv for configuration options. This consumes them, leaving only
+///the positional arguments after them in argc/argv.
+bool config_consume_options(struct Config* cfg, int* argc, char*** argv);
 
 /***** security.c *****/
 
