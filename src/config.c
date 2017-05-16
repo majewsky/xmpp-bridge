@@ -35,6 +35,7 @@ bool config_init(struct Config* cfg) {
     cfg->drop_privileges = geteuid() == 0; //by default, only when started as root
     cfg->ctx = NULL;
     cfg->connected = false;
+    cfg->connecting = false;
 
     //validate input
     bool valid = true;

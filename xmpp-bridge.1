@@ -49,6 +49,12 @@ interactive scripts might be confused by messages that don't relate to the
 current session. If the recipience of delayed messages is desired, this option
 can be set.
 .PP
+.SH NOTES
+.PP
+When any sort of error occurs, xmpp-bridge will report an error,
+disconnect and exit immediately. Programs using xmpp-bridge should thus be
+prepared to handle its sudden death gracefully at any time.
+.PP
 .SH EXAMPLE
 .PP
 Report the current date and time to user "peer@example.org" every 5 minutes:

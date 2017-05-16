@@ -19,6 +19,7 @@
 
 #include "xmpp-bridge.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strophe.h>
@@ -93,20 +94,29 @@ int message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, void* 
 }
 
 void conn_handler(xmpp_conn_t* const conn, const xmpp_conn_event_t event, const int error, xmpp_stream_error_t* const stream_error, void* const userdata) {
-    //TODO handle these arguments (if necessary)
-    (void) error;
-    (void) stream_error;
+    if (error != 0) {
+        fprintf(stderr, "ERROR: received error %d from libstrophe\n", error);
+    }
+    if (stream_error != NULL) {
+        char* buf = NULL;
+        size_t buflen = 0;
+        if (xmpp_stanza_to_text(stream_error->stanza, &buf, &buflen) != 0) {
+            fprintf(stderr, "ERROR: received error from server: %s\n", stream_error->text);
+        } else {
+            fprintf(stderr, "ERROR: received error from server: %s\n", buf);
+        }
+        free(buf);
+    }
+
     //userdata contains a Config struct
     struct Config* cfg = (struct Config*) userdata;
+    cfg->connecting = false; //initial connection is over
 
     if (event == XMPP_CONN_CONNECT) {
         xmpp_handler_add(conn, message_handler, NULL, "message", "chat", cfg);
         send_presence(conn, cfg);
         cfg->connected = true;
-    }
-    else {
-        //disconnected or a failure occurred
-        //TODO: on disconnect, check stdin for EOF and reopen if not yet exhausted
+    } else {
         cfg->connected = false;
     }
 }
@@ -147,10 +157,14 @@ int main(int argc, char** argv) {
     xmpp_conn_set_jid(conn, cfg.jid);
     xmpp_conn_set_pass(conn, cfg.password);
 
-    //enter the first event loop which creates the connection and then returns
-    //(see xmpp_stop() call in conn_handler())
-    xmpp_connect_client(conn, NULL, 0, conn_handler, &cfg);
-    while (!cfg.connected) {
+    //enter the first event loop which creates the connection and waits until
+    //conn_handler is called
+    cfg.connecting = true;
+    if (xmpp_connect_client(conn, NULL, 0, conn_handler, &cfg) != 0) {
+        fprintf(stderr, "FATAL: failed to connect to %s\n", cfg.jid);
+        return 1;
+    }
+    while (cfg.connecting) {
         xmpp_run_once(cfg.ctx, 100);
     }
 

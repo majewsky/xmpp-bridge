@@ -35,6 +35,7 @@ struct Config {
     bool        drop_privileges;
     xmpp_ctx_t* ctx;
     bool        connected;
+    bool        connecting;
     struct IO*  io;
 };
 
