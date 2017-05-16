@@ -21,11 +21,7 @@ As a developer, say `make MODE=debug` instead.
 
 ## Usage
 
-Call like
+Set the environment variables `XMPPBRIDGE_JID`, `XMPPBRIDGE_PASSWORD` and `XMPPBRIDGE_PEER_JID` to the respective
+values, then call `xmpp-bridge`.
 
-```bash
-xmpp-bridge [options] $OTHER_JID $OWN_JID $PASSWORD
-```
-
-Credentials can also be given as environment variables instead of on the
-command line. For details, have a look at the [manpage](./xmpp-bridge.1).
+For details (e.g. option arguments), have a look at the [manpage](./xmpp-bridge.1).
