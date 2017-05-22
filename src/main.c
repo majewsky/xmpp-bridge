@@ -19,6 +19,7 @@
 
 #include "xmpp-bridge.h"
 
+#include <sys/wait.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -229,7 +230,20 @@ int main(int argc, char** argv) {
     xmpp_conn_release(conn);
     xmpp_ctx_free(cfg.ctx);
     xmpp_shutdown();
+    //TODO: which of these can throw errors?
 
-    //TODO: which of the xmpp_ functions can throw errors?
-    return 0;
+    //if child process was launched, wait on it and propagate its exit code
+    if (child_pid == 0) {
+        return 0;
+    }
+    int wstatus;
+    if (waitpid(child_pid, &wstatus, 0) < 0) {
+        perror("wait() on child process");
+        return 1;
+    }
+    if (WIFEXITED(wstatus)) {
+        return WEXITSTATUS(wstatus);
+    } else {
+        return 1;
+    }
 }
