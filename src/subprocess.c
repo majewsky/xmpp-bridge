@@ -79,9 +79,6 @@ bool subprocess_setup_child(int argc, char** argv, int fds[4]) {
     }
     memcpy(argv2, argv, sizeof(char*) * argc);
     argv2[argc] = NULL;
-    for (int i = 0; i < argc; ++i) {
-        fprintf(stderr, "arg[%d] = %s", i, argv2[i]);
-    }
 
     MUST_SUCCEED(execvp(argv2[0], argv2));
     return false;
