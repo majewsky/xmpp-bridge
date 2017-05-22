@@ -91,6 +91,9 @@ bool config_consume_options(struct Config* cfg, int* argc, char*** argv) {
         else if (strcmp(arg, "--no-drop-privileges") == 0) {
             cfg->drop_privileges = false;
         }
+        else if (strcmp(arg, "--") == 0) {
+            return true;
+        }
         else {
             fprintf(stderr,
                 "FATAL: unrecognized option: \"%s\"\n"
