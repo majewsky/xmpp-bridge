@@ -22,6 +22,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <unistd.h>
 
 #include <strophe.h>
 
@@ -49,6 +50,14 @@ bool config_consume_options(struct Config* cfg, int* argc, char*** argv);
 
 ///Setup the security context for the application. Returns false on error.
 bool sec_init(const struct Config* cfg);
+
+/***** subprocess.c *****/
+
+///If argc/argv are non-empty, launch a child process with that command line,
+///and setup stdin/stdout as a bidirectional pipe to the child process.
+///On success, return the PID of the child process in @a pid, or 0 if no child
+///process was launched because argv was empty.
+bool subprocess_init(int argc, char** argv, pid_t* pid);
 
 /***** io.c *****/
 

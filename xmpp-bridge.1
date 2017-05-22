@@ -1,10 +1,10 @@
-.TH xmpp-bridge 1 "2016-08-30" "xmpp-bridge" "User Commands"
+.TH xmpp-bridge 1 "2017-05-22" "xmpp-bridge" "User Commands"
 .PP
 .SH NAME
 xmpp-bridge \- connect command-line programs to XMPP
 .PP
 .SH SYNOPSIS
-\fBxmpp-bridge\fR [\fIOPTION\fR]...
+\fBxmpp-bridge\fR [\fIOPTION\fR]... [\fIARG\fR]...
 .PP
 .SH DESCRIPTION
 .PP
@@ -49,6 +49,24 @@ interactive scripts might be confused by messages that don't relate to the
 current session. If the recipience of delayed messages is desired, this option
 can be set.
 .PP
+.IP \fB--\fR 4
+Do not interpret any subsequent arguments as options. This behavior is also implied
+by any argument that does not start with \fB--\fR.
+.PP
+.SH ARGUMENTS
+.PP
+If further arguments are given, the command line formed by these arguments will
+be executed in a child process. The original standard input and output of
+\fBxmpp-bridge\fR will be closed, and a bidirectional pipe is set up between
+\fBxmpp-bridge\fR and its child process, so that the child process' standard
+output is transmitted to the peer, and the peer's messages become visible on
+the child process's standard input.
+.PP
+The child process's standard error is the same as the standard error of
+\fBxmpp-bridge\fR. If you want error messages from the child process to end up
+in XMPP instead, close standard error and duplicate standard output. For
+example, when the child process is a shell script, invoke "exec 2>&1" in it.
+.PP
 .SH NOTES
 .PP
 When any sort of error occurs, xmpp-bridge will report an error,
@@ -73,6 +91,24 @@ Report the current date and time to user "peer@example.org" every 5 minutes:
 .ft
 .fi
 .PP
+Receive and act on user input by wrapping a script in \fBxmpp-bridge\fR:
+.PP
+.ft CW
+.nf
+.ne 3
+\&    $ cat > example.sh
+\&    echo "What's your name?"
+\&    read ANSWER
+\&    echo "Hello $ANSWER."
+\&    ^D
+\&    $ export XMPPBRIDGE_JID=dialogsystem@example.org
+\&    $ export XMPPBRIDGE_PEER_JID=peer@example.org
+\&    $ export XMPPBRIDGE_PASSWORD=password
+\&    $ xmpp-bridge bash example.sh
+.ft
+.fi
+.PP
 .SH SEE ALSO
 .PP
-Project homepage: <https://github.com/majewsky/xmpp-bridge>
+Project homepage: <https://github.com/majewsky/xmpp-bridge> - Grab the code,
+report issues and send pull requests over there.

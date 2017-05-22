@@ -134,6 +134,13 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    //fork child process, if requested
+    pid_t child_pid;
+    if (!subprocess_init(argc, argv, &child_pid)) {
+        return 1;
+    }
+    //TODO: kill child_pid on exit
+
     //initialize file handles
     struct IO io;
     io_init(&io, STDIN, STDOUT);
