@@ -24,4 +24,15 @@ As a developer, say `make MODE=debug` instead.
 Set the environment variables `XMPPBRIDGE_JID`, `XMPPBRIDGE_PASSWORD` and `XMPPBRIDGE_PEER_JID` to the respective
 values, then call `xmpp-bridge`.
 
+A common usecase is to prepend `xmpp-bridge` to a cron job's command line, so
+that its stdin and stdout are connected to XMPP.
+
+```bash
+$ cat test.sh
+echo "What's your name?"
+read ANSWER
+echo "Hi ${ANSWER}!"
+$ xmpp-bridge bash test.sh
+```
+
 For details (e.g. option arguments), have a look at the [manpage](./xmpp-bridge.1).
