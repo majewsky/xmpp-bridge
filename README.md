@@ -1,3 +1,8 @@
+# Archived
+
+I am using Matrix now, and thus do not have the need for this anymore.
+The code has not been tested with newer versions of libstrophe for quite some time.
+
 # xmpp-bridge
 
 A simple program that connects to an XMPP account and communicates with a
